@@ -1,0 +1,8 @@
+CREATE TABLE sessions (
+	id BIGINT PRIMARY KEY,
+	user_id BIGINT NOT NULL,
+	start_time TIMESTAMP NOT NULL DEFAULT NOW(),
+	end_time TIMESTAMP,
+	device VARCHAR(100),
+	browser VARCHAR(100),
+)
