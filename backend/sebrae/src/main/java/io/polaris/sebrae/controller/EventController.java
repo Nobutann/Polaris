@@ -27,14 +27,10 @@ public class EventController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(saved);
 	}
 
-
     @PostMapping("/inactivity")
-    public ResponseEntity<Void> registerInactivity(
-        @RequestBody InactivityRequestDTO request
-    ) {
-        service.registerInactivity(request);
+    public ResponseEntity<Void> registerInactivity(@RequestBody InactivityRequestDTO dto) {
+        eventService.registerInactivity(dto);
 
         return ResponseEntity.ok().build();
-    }
   }
 }
