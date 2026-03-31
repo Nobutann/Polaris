@@ -60,7 +60,7 @@ public class EventControllerTest {
 		dto.setCourseId(10L);
 		dto.setType(EventType.LESSON_STARTED);
 		
-		mockMvc.perform(post("/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isCreated()).andExpect(jsonPath("$.userId").value(1)).andExpect(jsonPath("$.courseId").value(10));
+		mockMvc.perform(post("/api/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isCreated()).andExpect(jsonPath("$.userId").value(1)).andExpect(jsonPath("$.courseId").value(10));
 	}
 	
 	@Test
@@ -69,7 +69,7 @@ public class EventControllerTest {
 		dto.setCourseId(10L);
 		dto.setType(EventType.LESSON_STARTED);
 		
-		mockMvc.perform(post("/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());
+		mockMvc.perform(post("/api/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());
 	}
 	
 	@Test
@@ -78,7 +78,7 @@ public class EventControllerTest {
 		dto.setUserId(1L);
 		dto.setType(EventType.LESSON_STARTED);
 		
-		mockMvc.perform(post("/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());
+		mockMvc.perform(post("/api/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());
 	}
 	
 	@Test
@@ -87,7 +87,7 @@ public class EventControllerTest {
 		dto.setUserId(1L);
 		dto.setCourseId(10L);
 		
-		mockMvc.perform(post("/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());
+		mockMvc.perform(post("/api/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());
 	}
 	
 	@Test
@@ -97,13 +97,13 @@ public class EventControllerTest {
 		dto.setCourseId(99L);
 		dto.setType(EventType.LESSON_STARTED);
 		
-		mockMvc.perform(post("/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isCreated());
+		mockMvc.perform(post("/api/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isCreated());
 		
 		assert eventRepository.count() == 1;
 	}
 	
 	@Test
 	void shouldReturn400WhenBodyIsEmpty() throws Exception {
-		mockMvc.perform(post("/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}")).andExpect(status().isBadRequest());
+		mockMvc.perform(post("/api/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}")).andExpect(status().isBadRequest());
 	}
 }

@@ -32,7 +32,6 @@ public class EventService {
 
      event.setType(EventType.SCREEN_INACTIVE);
 
-     repository.save(event);
+     eventRepository.save(event);
   }
-
 }
