@@ -1,29 +1,38 @@
 package io.polaris.sebrae.service;
 
-import io.polaris.sebrae.dto.InactivityRequestDTO;
-import io.polaris.sebrae.model.Event;
-import io.polaris.sebrae.model.enums.EventType;
-import io.polaris.sebrae.repository.EventRepository;
 import org.springframework.stereotype.Service;
+
+import io.polaris.sebrae.dto.EventRequestDTO;
+import io.polaris.sebrae.model.Event;
+import io.polaris.sebrae.repository.EventRepository;
+import io.polaris.sebrae.dto.InactivityRequestDTO;
+import io.polaris.sebrae.model.enums.EventType;
 
 @Service
 public class EventService {
+	
+	private final EventRepository eventRepository;
+	
+	public EventService(EventRepository eventRepository) {
+		this.eventRepository = eventRepository;
+	}
+	
+	public Event save(EventRequestDTO dto) {
+		Event event = new Event(dto.getUserId(), dto.getCourseId(), dto.getLessonId(), dto.getType(), dto.getMetadata(), dto.getDevice(), dto.getBrowser());
+		
+		return eventRepository.save(event);
+	}
 
-    private final EventRepository repository;
+  public void registerInactivity(InactivityRequestDTO dto) {
+     Event event = new Event();
 
-    public EventService(EventRepository repository) {
-        this.repository = repository;
-    }
+     event.setUserId(dto.getUserId());
+     event.setCourseId(dto.getCourseId());
+     event.setLessonId(dto.getLessonId());
 
-    public void registerInactivity(InactivityRequestDTO dto) {
-        Event event = new Event();
+     event.setType(EventType.SCREEN_INACTIVE);
 
-        event.setUserId(dto.getUserId());
-        event.setCourseId(dto.getCourseId());
-        event.setLessonId(dto.getLessonId());
+     repository.save(event);
+  }
 
-        event.setType(EventType.SCREEN_INACTIVE);
-
-        repository.save(event);
-    }
 }
