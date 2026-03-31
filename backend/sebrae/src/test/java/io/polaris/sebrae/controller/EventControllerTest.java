@@ -3,15 +3,14 @@ package io.polaris.sebrae.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessor.csrf;
-
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,6 +27,7 @@ import io.polaris.sebrae.repository.EventRepository;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
+@WithMockUser
 public class EventControllerTest {
 
 	@Container
@@ -60,7 +60,7 @@ public class EventControllerTest {
 		dto.setCourseId(10L);
 		dto.setType(EventType.LESSON_STARTED);
 		
-		mockMvc.perform(post("/events").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isCreated()).andExpect(jsonPath("$.userId").value(1)).andExpect(jsonPath("$courseId").value(10));
+		mockMvc.perform(post("/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isCreated()).andExpect(jsonPath("$.userId").value(1)).andExpect(jsonPath("$.courseId").value(10));
 	}
 	
 	@Test
@@ -69,7 +69,7 @@ public class EventControllerTest {
 		dto.setCourseId(10L);
 		dto.setType(EventType.LESSON_STARTED);
 		
-		mockMvc.perform(post("/events").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());
+		mockMvc.perform(post("/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());
 	}
 	
 	@Test
@@ -78,7 +78,7 @@ public class EventControllerTest {
 		dto.setUserId(1L);
 		dto.setType(EventType.LESSON_STARTED);
 		
-		mockMvc.perform(post("/events").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());
+		mockMvc.perform(post("/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());
 	}
 	
 	@Test
@@ -87,7 +87,7 @@ public class EventControllerTest {
 		dto.setUserId(1L);
 		dto.setCourseId(10L);
 		
-		mockMvc.perform(post("/events").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());
+		mockMvc.perform(post("/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());
 	}
 	
 	@Test
@@ -97,13 +97,13 @@ public class EventControllerTest {
 		dto.setCourseId(99L);
 		dto.setType(EventType.LESSON_STARTED);
 		
-		mockMvc.perform(post("/events").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isCreated());
+		mockMvc.perform(post("/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto))).andExpect(status().isCreated());
 		
 		assert eventRepository.count() == 1;
 	}
 	
 	@Test
 	void shouldReturn400WhenBodyIsEmpty() throws Exception {
-		mockMvc.perform(post("/events").contentType(MediaType.APPLICATION_JSON).content("{}")).andExpect(status().isBadRequest());
+		mockMvc.perform(post("/events").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}")).andExpect(status().isBadRequest());
 	}
 }
