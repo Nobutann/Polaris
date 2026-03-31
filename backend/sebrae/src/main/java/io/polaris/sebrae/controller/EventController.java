@@ -8,9 +8,11 @@ import io.polaris.sebrae.dto.EventRequestDTO;
 import io.polaris.sebrae.model.Event;
 import io.polaris.sebrae.service.EventService;
 import jakarta.validation.Valid;
+import io.polaris.sebrae.dto.InactivityRequestDTO;
+
 
 @RestController
-@RequestMapping("/events")
+@RequestMapping("/api/events")
 public class EventController {
 	
 	private final EventService eventService;
@@ -24,4 +26,15 @@ public class EventController {
 		Event saved = eventService.save(dto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(saved);
 	}
+
+
+    @PostMapping("/inactivity")
+    public ResponseEntity<Void> registerInactivity(
+        @RequestBody InactivityRequestDTO request
+    ) {
+        service.registerInactivity(request);
+
+        return ResponseEntity.ok().build();
+    }
+  }
 }

@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import io.polaris.sebrae.dto.EventRequestDTO;
 import io.polaris.sebrae.model.Event;
 import io.polaris.sebrae.repository.EventRepository;
+import io.polaris.sebrae.dto.InactivityRequestDTO;
+import io.polaris.sebrae.model.enums.EventType;
 
 @Service
 public class EventService {
@@ -20,4 +22,17 @@ public class EventService {
 		
 		return eventRepository.save(event);
 	}
+
+  public void registerInactivity(InactivityRequestDTO dto) {
+     Event event = new Event();
+
+     event.setUserId(dto.getUserId());
+     event.setCourseId(dto.getCourseId());
+     event.setLessonId(dto.getLessonId());
+
+     event.setType(EventType.SCREEN_INACTIVE);
+
+     repository.save(event);
+  }
+
 }

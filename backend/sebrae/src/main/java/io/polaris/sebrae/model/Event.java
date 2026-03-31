@@ -1,11 +1,9 @@
 package io.polaris.sebrae.model;
 
+import io.polaris.sebrae.model.enums.EventType;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-
 import org.hibernate.annotations.CreationTimestamp;
-
-import io.polaris.sebrae.model.enums.EventType;
 
 @Entity
 @Table(name = "events")
@@ -17,31 +15,38 @@ public class Event {
 
     @Column(nullable = false)
     private Long userId;
-    
+
     @Column(nullable = false)
     private Long courseId;
-    
+
     private Long lessonId;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EventType type;
-    
+
     @Column(columnDefinition = "TEXT")
     private String metadata;
-    
+
     private String device;
     private String browser;
-    
+
     @CreationTimestamp
     private LocalDateTime timestamp;
 
     public Event() {}
 
-    public Event(Long userId, Long courseId, Long lessonId, EventType type, String metadata, String device, String browser) {
+    public Event(
+        Long userId,
+        Long courseId,
+        Long lessonId,
+        EventType type,
+        String metadata,
+        String device,
+        String browser
+    ) {
         this.userId = userId;
         this.courseId = courseId;
-        this.lessonId = lessonId;
         this.lessonId = lessonId;
         this.type = type;
         this.metadata = metadata;
@@ -72,52 +77,52 @@ public class Event {
     public void setUserId(Long userId) {
         this.userId = userId;
     }
-    
+
     public Long getCourseId() {
-    	return courseId;
+        return courseId;
     }
-    
+
     public void setCourseId(Long courseId) {
-    	this.courseId = courseId;
+        this.courseId = courseId;
     }
-    
+
     public EventType getType() {
-    	return type;
+        return type;
     }
-    
+
     public void setType(EventType type) {
-    	this.type = type;
+        this.type = type;
     }
-    
+
     public String getMetadata() {
-    	return metadata;
+        return metadata;
     }
-    
+
     public void setMetadata(String metadata) {
-    	this.metadata = metadata;
+        this.metadata = metadata;
     }
-    
+
     public String getDevice() {
-    	return device;
+        return device;
     }
-    
+
     public void setDevice(String device) {
-    	this.device = device;
+        this.device = device;
     }
-    
+
     public String getBrowser() {
-    	return browser;
+        return browser;
     }
-    
+
     public void setBrowser(String browser) {
-    	this.browser = browser;
+        this.browser = browser;
     }
-    
+
     public LocalDateTime getTimestamp() {
-    	return timestamp;
+        return timestamp;
     }
-    
+
     public void setTimestamp(LocalDateTime timestamp) {
-    	this.timestamp = timestamp;
+        this.timestamp = timestamp;
     }
 }
