@@ -1,0 +1,6 @@
+polaris:
+  security:
+    # Em desenvolvimento local, não obriga o uso de X-Internal-Source para facilitar testes manuais com o InternalToken
+    require-source: false
+  # Mantém as sources disponíveis caso o header seja enviado opcionalmente:
+  internal-sources: collector:ROLE_COLLECTOR,analytics:ROLE_ANALYTICS,admin:ROLE_ADMIN

@@ -1,121 +1,104 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import { getCourses, getCourseSnapshots, getCourseEvasionPoints, getSignals } from './services/dataService';
+import { PageLayout } from './components/layout/PageLayout';
+import { OverviewPage } from './pages/OverviewPage';
+import { CourseDetailPage } from './pages/CourseDetailPage';
+import { LoadingSkeleton } from './components/shared/LoadingSkeleton';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [courses, setCourses] = useState([]);
+  const [signals, setSignals] = useState([]);
+  
+  const [selectedCourseId, setSelectedCourseId] = useState(null);
+  
+  const [snapshots, setSnapshots] = useState([]);
+  const [evasionPoints, setEvasionPoints] = useState([]);
+  
+  const [loadingCourses, setLoadingCourses] = useState(true);
+  const [loadingDetails, setLoadingDetails] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Carrega visão global (cursos e sinais globais)
+  useEffect(() => {
+    async function init() {
+      try {
+        setLoadingCourses(true);
+        const [cData, sData] = await Promise.all([
+          getCourses(),
+          getSignals()
+        ]);
+        setCourses(cData || []);
+        setSignals(sData || []);
+      } catch (err) {
+        console.error(err);
+        setError("Erro ao carregar dados da visão global.");
+      } finally {
+        setLoadingCourses(false);
+      }
+    }
+    init();
+  }, []);
+
+  // Carrega detalhes quando um curso é selecionado
+  useEffect(() => {
+    if (!selectedCourseId) {
+      setSnapshots([]);
+      setEvasionPoints([]);
+      return;
+    }
+
+    async function loadDetails() {
+      try {
+        setLoadingDetails(true);
+        const [snapData, evaData] = await Promise.all([
+          getCourseSnapshots(selectedCourseId),
+          getCourseEvasionPoints(selectedCourseId)
+        ]);
+        setSnapshots(snapData || []);
+        setEvasionPoints(evaData || []);
+      } catch (err) {
+        console.error(err);
+        // Fallback passivo na UI, limpa os dados
+        setSnapshots([]);
+        setEvasionPoints([]);
+      } finally {
+        setLoadingDetails(false);
+      }
+    }
+    loadDetails();
+  }, [selectedCourseId]);
+
+  const handleClearFilters = () => {
+    setSelectedCourseId(null);
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <PageLayout onClearFilters={handleClearFilters}>
+      {loadingCourses ? (
+        <LoadingSkeleton rows={4} />
+      ) : error ? (
+        <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--risk-high-text)' }}>
+          {error}
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      ) : !selectedCourseId ? (
+        <OverviewPage 
+          courses={courses} 
+          signals={signals} 
+          selectedCourseId={selectedCourseId}
+          onSelectCourse={setSelectedCourseId}
+        />
+      ) : (
+        <CourseDetailPage 
+          courses={courses}
+          snapshots={snapshots}
+          evasionPoints={evasionPoints}
+          signals={signals}
+          selectedCourseId={selectedCourseId}
+          onSelectCourse={setSelectedCourseId}
+        />
+      )}
+    </PageLayout>
+  );
 }
 
-export default App
+export default App;

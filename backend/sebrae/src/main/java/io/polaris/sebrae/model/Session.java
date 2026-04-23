@@ -16,6 +16,8 @@ public class Session {
 	
 	@Column(nullable = false)
 	private Long userId;
+
+	private Long courseId;
 	
 	@CreationTimestamp
 	private LocalDateTime startTime;
@@ -27,8 +29,9 @@ public class Session {
 	
 	public Session() {}
 	
-	public Session(Long userId, String device, String browser) {
+	public Session(Long userId, Long courseId, String device, String browser) {
 		this.userId = userId;
+		this.courseId = courseId;
 		this.device = device;
 		this.browser = browser;
 	}
@@ -47,6 +50,14 @@ public class Session {
 	
 	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+
+	public Long getCourseId() {
+		return courseId;
+	}
+
+	public void setCourseId(Long courseId) {
+		this.courseId = courseId;
 	}
 	
 	public LocalDateTime getStartTime() {
