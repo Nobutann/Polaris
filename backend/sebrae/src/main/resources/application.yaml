@@ -1,0 +1,86 @@
+spring:
+  application:
+    name: sebrae
+  mvc:
+    pathmatch:
+      use-suffix-pattern: false
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/sebrae}
+    username: ${DB_USERNAME:polaris}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/sebrae}
+    user: ${DB_USERNAME:polaris}
+    password: ${DB_PASSWORD}
+
+server:
+  error:
+    include-message: never
+    include-stacktrace: never
+
+polaris:
+  # Obrigatório: o boot falha se não configurado (via InternalTokenAuthFilter @PostConstruct)
+  internal-token: ${POLARIS_INTERNAL_TOKEN}
+
+  # Mapeamento de X-Internal-Source → ROLE. Formato: source1:ROLE_X,source2:ROLE_Y
+  # Exemplo: collector:ROLE_COLLECTOR,analytics:ROLE_ANALYTICS,admin:ROLE_ADMIN
+  # Se ausente, todos os callers autenticados recebem ROLE_INTERNAL_SERVICE (acesso amplo — não recomendado em produção)
+  internal-sources: ${POLARIS_INTERNAL_SOURCES:}
+
+  # IPs de proxies reversos confiáveis (separados por vírgula) cujo X-Forwarded-For será lido.
+  # Se vazio, X-Forwarded-For é ignorado e remoteAddr é sempre utilizado (padrão seguro).
+  trusted-proxy-ips: ${POLARIS_TRUSTED_PROXY_IPS:}
+
+  security:
+    # Bloqueia acessos iterativos sem o source header definido e mapeado
+    require-source: ${POLARIS_SECURITY_REQUIRE_SOURCE:true}
+    # Número de falhas de token por IP dentro da janela para disparar alerta BRUTE_FORCE_SUSPECTED
+    token-failure-threshold: ${POLARIS_TOKEN_FAILURE_THRESHOLD:10}
+    # Janela de tempo em ms para contagem de falhas de token por IP
+    token-failure-windowMs: ${POLARIS_TOKEN_FAILURE_WINDOW_MS:300000}
+
+  burst-detection:
+    recalculate:
+      # Número de recalculações por IP dentro da janela para disparar alerta BURST_DETECTED
+      threshold: ${POLARIS_BURST_THRESHOLD:5}
+      # Janela de tempo em ms para detecção de burst de recalculações
+      window-ms: ${POLARIS_BURST_WINDOW_MS:60000}
+
+rate-limit:
+  collection:
+    requests-per-minute: 60
+  analytics:
+    requests-per-minute: 30
+  admin:
+    requests-per-minute: 10
+  default:
+    requests-per-minute: 120
+
+logging:
+  level:
+    org.flywaydb: INFO
+
+youtube:
+  api:
+    key: ${YOUTUBE_API_KEY}
+    channel-id: ${YOUTUBE_CHANNEL_ID}
+    max-results: 50
+  ingestion:
+    delay-ms: 3600000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never

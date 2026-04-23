@@ -1,0 +1,30 @@
+# Segredos — NUNCA versionar
+.env
+.env.local
+.env.*.local
+
+# Manter apenas o template
+!.env.example
+
+# Artefatos de build
+target/
+dist/
+build/
+out/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+*.suo
+*.user
+
+# Node
+node_modules/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
