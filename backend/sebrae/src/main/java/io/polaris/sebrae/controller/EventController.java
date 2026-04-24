@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.polaris.sebrae.dto.EventRequestDTO;
+import io.polaris.sebrae.dto.EventResponseDTO;
 import io.polaris.sebrae.model.Event;
 import io.polaris.sebrae.service.EventService;
 import jakarta.validation.Valid;
@@ -22,13 +23,13 @@ public class EventController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Event> receive(@Valid @RequestBody EventRequestDTO dto) {
+	public ResponseEntity<EventResponseDTO> receive(@Valid @RequestBody EventRequestDTO dto) {
 		Event saved = eventService.save(dto);
-		return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+		return ResponseEntity.status(HttpStatus.CREATED).body(new EventResponseDTO(saved));
 	}
 
     @PostMapping("/inactivity")
-    public ResponseEntity<Void> registerInactivity(@RequestBody InactivityRequestDTO dto) {
+    public ResponseEntity<Void> registerInactivity(@Valid @RequestBody InactivityRequestDTO dto) {
         eventService.registerInactivity(dto);
 
         return ResponseEntity.ok().build();

@@ -2,8 +2,6 @@
 .env
 .env.local
 .env.*.local
-
-# Manter apenas o template
 .env.example
 
 # Artefatos de build
