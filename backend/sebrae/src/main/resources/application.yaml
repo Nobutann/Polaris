@@ -84,3 +84,7 @@ management:
   endpoint:
     health:
       show-details: never
+	  
+jwt:
+    secret: ${JWT_SECRET:polaris-dev-secret-minimo-32-caracteres-ok}
+	expiration-ms: 288000000
