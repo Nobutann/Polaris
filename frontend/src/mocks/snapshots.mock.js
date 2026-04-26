@@ -32,7 +32,11 @@ export const MOCK_SNAPSHOTS = {
       calculatedAt: isoNow,
       abandonmentStatus: inactive >= 15 ? 'ABANDONED' : (Math.random() > 0.8 && inactive < 15 ? 'RETURNED' : 'ACTIVE'),
       abandonedAt: inactive >= 15 ? new Date(Date.now() - (inactive - 15) * 86400000).toISOString() : (Math.random() > 0.8 && inactive < 15 ? new Date(Date.now() - 30 * 86400000).toISOString() : null),
-      returnedAt: (Math.random() > 0.8 && inactive < 15) ? new Date(Date.now() - inactive * 86400000).toISOString() : null
+      returnedAt: (Math.random() > 0.8 && inactive < 15) ? new Date(Date.now() - inactive * 86400000).toISOString() : null,
+      // Story 8
+      weightedRiskScore: riskBand === 'abandono_provavel' ? 82.5 : (riskBand === 'risco' ? 60.0 : (riskBand === 'atencao' ? 38.0 : 15.0)),
+      priorityLevel: riskBand === 'abandono_provavel' ? 'CRITICA' : (riskBand === 'risco' ? 'ALTA' : (riskBand === 'atencao' ? 'MEDIA' : 'BAIXA')),
+      mainRiskReason: riskBand === 'abandono_provavel' ? 'INATIVIDADE_ALTA' : (riskBand === 'risco' ? 'BAIXA_CONTINUIDADE' : (riskBand === 'atencao' ? 'BAIXA_CONCLUSAO' : 'SEM_SINAIS_SUFICIENTES')),
     };
   }),
 
@@ -58,7 +62,11 @@ export const MOCK_SNAPSHOTS = {
       calculatedAt: isoNow,
       abandonmentStatus: riskBand === 'abandono_provavel' ? 'ABANDONED' : 'ACTIVE',
       abandonedAt: riskBand === 'abandono_provavel' ? new Date().toISOString() : null,
-      returnedAt: null
+      returnedAt: null,
+      // Story 8
+      weightedRiskScore: riskBand === 'abandono_provavel' ? 78.0 : (riskBand === 'risco' ? 55.0 : 20.0),
+      priorityLevel: riskBand === 'abandono_provavel' ? 'ALTA' : (riskBand === 'risco' ? 'MEDIA' : 'BAIXA'),
+      mainRiskReason: riskBand === 'abandono_provavel' ? 'BAIXO_AVANCO' : (riskBand === 'risco' ? 'BAIXA_CONTINUIDADE' : 'SEM_SINAIS_SUFICIENTES'),
     };
   }),
   
@@ -79,6 +87,10 @@ export const MOCK_SNAPSHOTS = {
       calculatedAt: isoNow,
       abandonmentStatus: 'ACTIVE',
       abandonedAt: null,
-      returnedAt: null
+      returnedAt: null,
+      // Story 8
+      weightedRiskScore: i < 2 ? 52.0 : (i < 6 ? 32.0 : 10.0),
+      priorityLevel: i < 2 ? 'MEDIA' : (i < 6 ? 'BAIXA' : 'BAIXA'),
+      mainRiskReason: i < 2 ? 'BAIXA_CONCLUSAO' : 'SEM_SINAIS_SUFICIENTES',
   }))
 };

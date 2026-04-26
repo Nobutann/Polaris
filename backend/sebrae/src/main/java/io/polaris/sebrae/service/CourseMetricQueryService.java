@@ -70,7 +70,13 @@ public class CourseMetricQueryService {
         dto.setReturnedAfterAbandonment(status.isReturnedAfterAbandonment());
         dto.setReturnedAt(status.getReturnedAt());
         dto.setAbandonmentStatus(status.getAbandonmentStatus());
-        
+
+        dto.setWeightedRiskScore(snapshot.getWeightedRiskScore());
+        dto.setPriorityLevel(snapshot.getPriorityLevel() != null
+            ? snapshot.getPriorityLevel().name().toLowerCase() : null);
+        dto.setMainRiskReason(snapshot.getMainRiskReason() != null
+            ? snapshot.getMainRiskReason().name().toLowerCase() : null);
+
         return dto;
     }
 }

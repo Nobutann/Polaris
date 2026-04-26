@@ -11,6 +11,8 @@ import io.polaris.sebrae.model.Event;
 import io.polaris.sebrae.model.enums.EventType;
 import io.polaris.sebrae.repository.CourseMetricSnapshotRepository;
 import io.polaris.sebrae.repository.EventRepository;
+import io.polaris.sebrae.model.enums.PriorityLevel;
+import io.polaris.sebrae.model.enums.RiskReason;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +40,9 @@ public class CourseMetricServiceTest {
     @Mock
     private io.polaris.sebrae.repository.CourseLessonCountRepository lessonCountRepository;
 
+    @Mock
+    private WeightedRiskScoreService weightedRiskScoreService;
+
     @InjectMocks
     private CourseMetricService metricService;
 
@@ -46,6 +51,8 @@ public class CourseMetricServiceTest {
 
     @BeforeEach
     void setUp() {
+        lenient().when(weightedRiskScoreService.calculate(org.mockito.ArgumentMatchers.any()))
+            .thenReturn(new WeightedRiskScoreService.WeightedRiskResult(new BigDecimal("0.00"), PriorityLevel.BAIXA, RiskReason.BAIXO_AVANCO));
     }
 
     @Test

@@ -1,5 +1,7 @@
 package io.polaris.sebrae.model;
 
+import io.polaris.sebrae.model.enums.PriorityLevel;
+import io.polaris.sebrae.model.enums.RiskReason;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -55,6 +57,17 @@ public class CourseMetricSnapshot {
 
     @Column(name = "advance_depth", precision = 5, scale = 2)
     private BigDecimal advanceDepth;
+
+    @Column(name = "weighted_risk_score", precision = 5, scale = 2)
+    private BigDecimal weightedRiskScore;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "priority_level", length = 20)
+    private PriorityLevel priorityLevel;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "main_risk_reason", length = 80)
+    private RiskReason mainRiskReason;
 
     public CourseMetricSnapshot() {
         this.calculatedAt = LocalDateTime.now();
@@ -190,5 +203,29 @@ public class CourseMetricSnapshot {
 
     public void setAdvanceDepth(BigDecimal advanceDepth) {
         this.advanceDepth = advanceDepth;
+    }
+
+    public BigDecimal getWeightedRiskScore() {
+        return weightedRiskScore;
+    }
+
+    public void setWeightedRiskScore(BigDecimal weightedRiskScore) {
+        this.weightedRiskScore = weightedRiskScore;
+    }
+
+    public PriorityLevel getPriorityLevel() {
+        return priorityLevel;
+    }
+
+    public void setPriorityLevel(PriorityLevel priorityLevel) {
+        this.priorityLevel = priorityLevel;
+    }
+
+    public RiskReason getMainRiskReason() {
+        return mainRiskReason;
+    }
+
+    public void setMainRiskReason(RiskReason mainRiskReason) {
+        this.mainRiskReason = mainRiskReason;
     }
 }
