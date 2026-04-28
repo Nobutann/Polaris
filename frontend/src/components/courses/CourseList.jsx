@@ -8,7 +8,7 @@ export function CourseList({ courses, selectedCourseId, onSelectCourse }) {
         <h2 style={{ fontSize: '1.1rem', marginBottom: '0.2rem' }}>Cursos (Visão Operacional)</h2>
         <p style={{ fontSize: '0.8rem', color: '#a5c0f3', marginBottom: '1rem' }}>Ordenados por prioridade/risco</p>
       </div>
-      <div style={{ padding: '0 1.5rem 1.5rem 1.5rem', maxHeight: '70vh', overflowY: 'auto' }}>
+      <div style={{ padding: '1rem 1.5rem 1.5rem 1.5rem', maxHeight: '70vh', overflowY: 'auto' }}>
         {courses.map(course => (
           <CourseCard
             key={course.courseId}

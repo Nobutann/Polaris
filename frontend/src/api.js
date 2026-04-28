@@ -133,13 +133,19 @@ export async function fetchCoursesAggregated() {
         if (map[c] == null) {
             map[c] = {
                 courseId: c,
-                courseName: `Curso ${c}`,
+                // courseName não vem do endpoint global; usa fallback
+                courseName: s.courseName || `Curso ${c}`,
                 totalEnrolled: 0,
                 highRiskCount: 0,
                 medRiskCount: 0,
                 lowRiskCount: 0,
                 sumCompletion: 0,
                 sumDaysInactive: 0,
+                // Story 8
+                sumWeightedScore: 0,
+                countWeightedScore: 0,
+                priorityLevelCounts: {},
+                mainRiskReasonCounts: {},
             };
         }
 
@@ -154,11 +160,25 @@ export async function fetchCoursesAggregated() {
         }
 
         if (s.completionRatio != null) {
-            map[c].sumCompletion += s.completionRatio;
+            map[c].sumCompletion += Number(s.completionRatio);
         }
 
         if (s.daysSinceLastActivity != null) {
             map[c].sumDaysInactive += s.daysSinceLastActivity;
+        }
+
+        // Story 8 – agregação por curso
+        if (s.weightedRiskScore != null) {
+            map[c].sumWeightedScore += Number(s.weightedRiskScore);
+            map[c].countWeightedScore++;
+        }
+        if (s.priorityLevel) {
+            map[c].priorityLevelCounts[s.priorityLevel] =
+                (map[c].priorityLevelCounts[s.priorityLevel] || 0) + 1;
+        }
+        if (s.mainRiskReason) {
+            map[c].mainRiskReasonCounts[s.mainRiskReason] =
+                (map[c].mainRiskReasonCounts[s.mainRiskReason] || 0) + 1;
         }
     });
 
@@ -174,6 +194,21 @@ export async function fetchCoursesAggregated() {
                 riskLevel = 'MÉDIO';
             }
 
+            // Story 8 – derivação dos campos agregados por curso
+            const avgWeightedScore =
+                c.countWeightedScore > 0
+                    ? c.sumWeightedScore / c.countWeightedScore
+                    : null;
+
+            /** Retorna a chave com maior contagem num objeto {key: count} */
+            const modeOf = (counts) => {
+                const entries = Object.entries(counts);
+                if (!entries.length) return null;
+                return entries.reduce((best, cur) =>
+                    cur[1] > best[1] ? cur : best
+                )[0];
+            };
+
             return {
                 courseId: c.courseId,
                 courseName: c.courseName,
@@ -186,6 +221,10 @@ export async function fetchCoursesAggregated() {
                 avgDaysInactive: c.totalEnrolled > 0 ? c.sumDaysInactive / c.totalEnrolled : 0,
                 riskLevel: riskLevel,
                 evasionTrend: 'estável',
+                // Story 8
+                weightedRiskScore: avgWeightedScore,
+                priorityLevel: modeOf(c.priorityLevelCounts),
+                mainRiskReason: modeOf(c.mainRiskReasonCounts),
             };
         })
         .sort((a, b) => b.highRiskCount - a.highRiskCount);

@@ -20,6 +20,9 @@ public class CourseMetricSnapshotDTO {
     private Boolean retained30d;
     private LocalDateTime firstRelevantActivityAt;
     private BigDecimal advanceDepth;
+    private BigDecimal weightedRiskScore;
+    private String priorityLevel;
+    private String mainRiskReason;
 
     public CourseMetricSnapshotDTO(Long userId, Long courseId, Integer daysSinceLastActivity, String riskBand, Integer returnFrequency30d, BigDecimal continuityRate, LocalDateTime lastRelevantActivityAt, LocalDateTime calculatedAt) {
         this.userId = userId;
@@ -75,4 +78,13 @@ public class CourseMetricSnapshotDTO {
 
     public BigDecimal getAdvanceDepth() { return advanceDepth; }
     public void setAdvanceDepth(BigDecimal advanceDepth) { this.advanceDepth = advanceDepth; }
+
+    public BigDecimal getWeightedRiskScore() { return weightedRiskScore; }
+    public void setWeightedRiskScore(BigDecimal weightedRiskScore) { this.weightedRiskScore = weightedRiskScore; }
+
+    public String getPriorityLevel() { return priorityLevel; }
+    public void setPriorityLevel(String priorityLevel) { this.priorityLevel = priorityLevel; }
+
+    public String getMainRiskReason() { return mainRiskReason; }
+    public void setMainRiskReason(String mainRiskReason) { this.mainRiskReason = mainRiskReason; }
 }

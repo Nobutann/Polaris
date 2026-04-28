@@ -23,12 +23,14 @@ public class CourseMetricService {
     private final EventRepository eventRepository;
     private final io.polaris.sebrae.repository.CourseLessonCountRepository lessonCountRepository;
     private final AuditLogger auditLogger;
+    private final WeightedRiskScoreService weightedRiskScoreService;
 
-    public CourseMetricService(CourseMetricSnapshotRepository snapshotRepository, EventRepository eventRepository, io.polaris.sebrae.repository.CourseLessonCountRepository lessonCountRepository, AuditLogger auditLogger) {
+    public CourseMetricService(CourseMetricSnapshotRepository snapshotRepository, EventRepository eventRepository, io.polaris.sebrae.repository.CourseLessonCountRepository lessonCountRepository, AuditLogger auditLogger, WeightedRiskScoreService weightedRiskScoreService) {
         this.snapshotRepository = snapshotRepository;
         this.eventRepository = eventRepository;
         this.lessonCountRepository = lessonCountRepository;
         this.auditLogger = auditLogger;
+        this.weightedRiskScoreService = weightedRiskScoreService;
     }
 
     @Transactional
@@ -56,6 +58,11 @@ public class CourseMetricService {
         snapshot.setCompletionRatio(calculateM6(relevantEvents));
         calculateM7(snapshot, relevantEvents);
         snapshot.setAdvanceDepth(calculateM8(courseId, relevantEvents));
+
+        WeightedRiskScoreService.WeightedRiskResult risk = weightedRiskScoreService.calculate(snapshot);
+        snapshot.setWeightedRiskScore(risk.getScore());
+        snapshot.setPriorityLevel(risk.getPriorityLevel());
+        snapshot.setMainRiskReason(risk.getMainRiskReason());
 
         snapshotRepository.save(snapshot);
     }
