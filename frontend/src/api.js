@@ -52,9 +52,27 @@ function _normalizeArrayResponse(raw, context) {
     };
 }
 
+export async function login(email, password) {
+    const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+        throw {
+            status: response.status,
+            message: response.status === 401 ? 'Credenciais inválidas.' : `Erro ao autenticar: ${response.statusText}`,
+        };
+    }
+
+    return await response.json();
+}
+
 // ---------------------------------------------------------------------------
 // API calls
 // ---------------------------------------------------------------------------
+
 
 export async function fetchCourseSnapshots(courseId) {
     const res = await fetch(`/api/metrics/courses/${courseId}`, {

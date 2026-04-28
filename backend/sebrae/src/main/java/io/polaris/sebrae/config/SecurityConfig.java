@@ -1,11 +1,15 @@
 package io.polaris.sebrae.config;
 
+import io.polaris.sebrae.security.JwtAuthFilter;
 import io.polaris.sebrae.service.AuditLogger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 
@@ -14,13 +18,20 @@ import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWrite
 public class SecurityConfig {
 
     private final InternalTokenAuthFilter internalTokenAuthFilter;
+    private final JwtAuthFilter jwtAuthFilter;
     private final AuditLogger auditLogger;
 
-    public SecurityConfig(InternalTokenAuthFilter internalTokenAuthFilter, AuditLogger auditLogger) {
+    public SecurityConfig(InternalTokenAuthFilter internalTokenAuthFilter, JwtAuthFilter jwtAuthFilter, AuditLogger auditLogger) {
         this.internalTokenAuthFilter = internalTokenAuthFilter;
+        this.jwtAuthFilter = jwtAuthFilter;
         this.auditLogger = auditLogger;
     }
-
+    
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+    		return new BCryptPasswordEncoder();
+    }
+    
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -41,7 +52,8 @@ public class SecurityConfig {
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/v3/api-docs/**",
-                        "/actuator/health"
+                        "/actuator/health",
+                        "/api/auth/login"
                 ).permitAll()
 
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/metrics/courses/*/recalculate").hasRole("ADMIN")
@@ -54,7 +66,9 @@ public class SecurityConfig {
                 .requestMatchers("/actuator/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
         );
-
+        
+        // Pra qualquer pessoa que mexer aqui, o jwtauthfilter SEMPRE antes do internaltoken, obrigado.
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(internalTokenAuthFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         http.exceptionHandling(exceptions -> exceptions
