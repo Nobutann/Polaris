@@ -5,19 +5,19 @@ import { RiskDistribution } from '../components/metrics/RiskDistribution';
 
 export function OverviewPage({ courses, signals, selectedCourseId, onSelectCourse }) {
   const kpis = useMemo(() => {
-    if (!courses.length) return { total: 0, highRiskUrl: 0, avgComp: 0 };
-    let highRiskCountTotal = 0;
-    let enrolledTotal = 0;
+    if (!courses.length) return { total: 0, highRiskPct: 0, avgComp: 0 };
+    
+    let highRiskCourses = 0;
     let compSum = 0;
+    
     courses.forEach(c => {
-      highRiskCountTotal += c.highRiskCount;
-      enrolledTotal += c.totalEnrolled;
+      if (c.riskLevel === 'ALTO') highRiskCourses++;
       compSum += c.avgCompletionRatio;
     });
 
     return {
       total: courses.length,
-      highRiskPct: enrolledTotal > 0 ? Math.round((highRiskCountTotal / enrolledTotal) * 100) : 0,
+      highRiskPct: courses.length > 0 ? Math.round((highRiskCourses / courses.length) * 100) : 0,
       avgComp: Math.round((compSum / courses.length) * 100)
     };
   }, [courses]);
@@ -39,7 +39,7 @@ export function OverviewPage({ courses, signals, selectedCourseId, onSelectCours
             <div className="kpi-value" style={{ color: 'var(--sebrae-blue)' }}>{kpis.total}</div>
           </div>
           <div className="kpi-box" style={{ textAlign: 'center', background: '#fee2e2', border: 'none' }}>
-            <div className="kpi-label">Alunos em Risco Crítico/Alto</div>
+            <div className="kpi-label">Cursos em Risco Crítico/Alto</div>
             <div className="kpi-value" style={{ color: 'var(--risk-high-text)' }}>{kpis.highRiskPct}%</div>
           </div>
         </div>

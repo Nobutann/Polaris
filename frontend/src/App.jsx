@@ -3,6 +3,7 @@ import { getCourses, getCourseSnapshots, getCourseEvasionPoints, getSignals } fr
 import { PageLayout } from './components/layout/PageLayout';
 import { OverviewPage } from './pages/OverviewPage';
 import { CourseDetailPage } from './pages/CourseDetailPage';
+import { RelevanceConfigPage } from './pages/RelevanceConfigPage';
 import { LoadingSkeleton } from './components/shared/LoadingSkeleton';
 
 function App() {
@@ -11,6 +12,8 @@ function App() {
   
   const [selectedCourseId, setSelectedCourseId] = useState(null);
   
+  const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard' | 'relevance'
+
   const [snapshots, setSnapshots] = useState([]);
   const [evasionPoints, setEvasionPoints] = useState([]);
   
@@ -72,8 +75,12 @@ function App() {
     setSelectedCourseId(null);
   };
 
+  if (currentView === 'relevance') {
+    return <RelevanceConfigPage onBack={() => setCurrentView('dashboard')} />;
+  }
+
   return (
-    <PageLayout onClearFilters={handleClearFilters}>
+    <PageLayout onClearFilters={handleClearFilters} onNavigateRelevance={() => setCurrentView('relevance')}>
       {loadingCourses ? (
         <LoadingSkeleton rows={4} />
       ) : error ? (

@@ -10,16 +10,15 @@ export function RiskDistribution({ courses }) {
     { name: 'Baixo/Engajado', value: 0, color: 'var(--risk-low-text)' }
   ];
 
-  let totalValue = 0;
   courses.forEach(c => {
-    data[0].value += (c.highRiskCount || 0);
-    data[1].value += (c.medRiskCount || 0);
-    data[2].value += (c.lowRiskCount || 0);
-    totalValue += (c.highRiskCount || 0) + (c.medRiskCount || 0) + (c.lowRiskCount || 0);
+    if (c.riskLevel === 'ALTO') {
+      data[0].value++;
+    } else if (c.riskLevel === 'MÉDIO') {
+      data[1].value++;
+    } else {
+      data[2].value++;
+    }
   });
-
-  // Filtra apenas o que tem valor para não quebrar o círculo com padding de itens vazios
-  const activeData = data.filter(d => d.value > 0);
 
   return (
     <div style={{ width: '100%', minHeight: 300, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -28,7 +27,7 @@ export function RiskDistribution({ courses }) {
         <PieChart>
           {/* Círculo de fundo para "fechar" o espaço se houver gaps ou poucos dados */}
           <Pie
-            data={[{ value: 1 }]}
+            data={[{ name: 'fundo', value: 1 }]}
             cx="50%"
             cy="50%"
             innerRadius={60}
@@ -37,27 +36,29 @@ export function RiskDistribution({ courses }) {
             stroke="none"
             dataKey="value"
             isAnimationActive={false}
+            legendType="none"
+            tooltipType="none"
           />
           <Pie
-            data={activeData}
+            data={data}
             cx="50%"
             cy="50%"
             innerRadius={60}
             outerRadius={80}
-            paddingAngle={activeData.length > 1 ? 4 : 0}
+            paddingAngle={data.filter(d => d.value > 0).length > 1 ? 4 : 0}
             dataKey="value"
             stroke="none"
             cornerRadius={4}
             startAngle={90}
             endAngle={-270}
           >
-            {activeData.map((entry, index) => (
+            {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
           <Tooltip 
             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-            formatter={(val) => [`${val} alunos`, 'Volume']} 
+            formatter={(val) => [`${val} cursos`, 'Volume']} 
           />
           <Legend 
             verticalAlign="bottom" 

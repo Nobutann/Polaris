@@ -44,6 +44,7 @@ public class SecurityConfig {
                         "/actuator/health"
                 ).permitAll()
 
+                .requestMatchers("/api/relevance-config/**").hasRole("ADMIN")
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/metrics/courses/*/recalculate").hasRole("ADMIN")
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/metrics/courses/**").hasAnyRole("ANALYTICS", "ADMIN")
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/abandonment/**").hasAnyRole("ANALYTICS", "ADMIN")

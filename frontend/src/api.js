@@ -151,9 +151,11 @@ export async function fetchCoursesAggregated() {
 
         map[c].totalEnrolled++;
 
-        if (s.riskBand === 'abandono_provavel' || s.riskBand === 'risco') {
+        // Usa priorityLevel (Story 8) se disponível, caso contrário cai no riskBand legado
+        const p = s.priorityLevel;
+        if (p === 'CRITICA' || p === 'ALTA' || s.riskBand === 'abandono_provavel' || s.riskBand === 'risco') {
             map[c].highRiskCount++;
-        } else if (s.riskBand === 'atencao') {
+        } else if (p === 'MEDIA' || s.riskBand === 'atencao') {
             map[c].medRiskCount++;
         } else {
             map[c].lowRiskCount++;
@@ -251,4 +253,37 @@ export async function fetchSignals(courseId) {
     } catch (err) {
         return [];
     }
+}
+
+export async function fetchRelevanceWeights() {
+    const res = await fetch(`/api/relevance-config/weights`, {
+        headers: _getAuthHeaders(),
+    });
+    if (!res.ok) {
+        throw new Error("Erro ao buscar configuração de pesos");
+    }
+    return await res.json();
+}
+
+export async function updateRelevanceWeight(signalKey, payload) {
+    const res = await fetch(`/api/relevance-config/weights/${signalKey}`, {
+        method: 'PUT',
+        headers: _getAuthHeaders(),
+        body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+        throw new Error("Erro ao atualizar configuração. Talvez a ação tenha sido bloqueada (ex: deixar todos desativados).");
+    }
+    return await res.json();
+}
+
+export async function resetRelevanceWeights() {
+    const res = await fetch(`/api/relevance-config/weights/reset`, {
+        method: 'POST',
+        headers: _getAuthHeaders(),
+    });
+    if (!res.ok) {
+        throw new Error("Erro ao resetar pesos");
+    }
+    return await res.json();
 }

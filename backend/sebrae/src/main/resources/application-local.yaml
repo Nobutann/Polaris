@@ -6,6 +6,7 @@ spring:
     defer-datasource-initialization: true
 
 polaris:
+  internal-token: default-dev-token
   security:
     # Em desenvolvimento local, não obriga o uso de X-Internal-Source para facilitar testes manuais com o InternalToken
     require-source: false

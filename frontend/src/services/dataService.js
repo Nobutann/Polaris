@@ -60,3 +60,37 @@ export async function getSignals(courseId) {
   }
   return realApi.fetchSignals(courseId);
 }
+
+export async function getRelevanceWeights() {
+  if (isDemo) {
+    await delay(300);
+    return [
+      { signalKey: 'INACTIVITY', weight: 30, enabled: true },
+      { signalKey: 'CONTINUITY', weight: 20, enabled: true },
+      { signalKey: 'COMPLETION', weight: 20, enabled: true },
+      { signalKey: 'ADVANCE_DEPTH', weight: 30, enabled: true }
+    ];
+  }
+  return realApi.fetchRelevanceWeights();
+}
+
+export async function updateRelevanceWeight(signalKey, payload) {
+  if (isDemo) {
+    await delay(300);
+    return { signalKey, ...payload };
+  }
+  return realApi.updateRelevanceWeight(signalKey, payload);
+}
+
+export async function resetRelevanceWeights() {
+  if (isDemo) {
+    await delay(300);
+    return [
+      { signalKey: 'INACTIVITY', weight: 30, enabled: true },
+      { signalKey: 'CONTINUITY', weight: 20, enabled: true },
+      { signalKey: 'COMPLETION', weight: 20, enabled: true },
+      { signalKey: 'ADVANCE_DEPTH', weight: 30, enabled: true }
+    ];
+  }
+  return realApi.resetRelevanceWeights();
+}

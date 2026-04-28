@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function AppHeader() {
+export function AppHeader({ onNavigateRelevance }) {
   const isDemo = import.meta.env.VITE_DEMO_MODE === 'true';
 
   return (
@@ -20,7 +20,19 @@ export function AppHeader() {
           <p>Visão geral de cursos, evasão e risco operacional.</p>
         </div>
       </div>
-      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+        {onNavigateRelevance && (
+          <button 
+            onClick={onNavigateRelevance}
+            style={{
+              background: 'transparent', color: 'white', border: '1px solid rgba(255,255,255,0.3)',
+              padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem',
+              fontWeight: '600'
+            }}
+          >
+            ⚙️ Relevância
+          </button>
+        )}
         <span style={{ fontSize: '0.8rem', color: '#a5c0f3' }}>? Notificações</span>
         <div style={{
           width: 32, height: 32, borderRadius: 16, background: 'white',
