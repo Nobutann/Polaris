@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
 
 :root {
   --sebrae-blue: #04255d;
@@ -241,6 +242,8 @@ table {
 }
 th { text-align: left; padding: 1rem; border-bottom: 1px solid var(--border); color: var(--text-muted); font-weight: 600;}
 td { padding: 1rem; border-bottom: 1px solid var(--border); }
+
+tr:hover td { background: #f8fafc; }
 tr:hover td { background: #f8fafc; }
 
 /* ─── Weighted Risk Score – tokens ─────────────────────────── */
