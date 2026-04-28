@@ -4,8 +4,24 @@ import { PageLayout } from './components/layout/PageLayout';
 import { OverviewPage } from './pages/OverviewPage';
 import { CourseDetailPage } from './pages/CourseDetailPage';
 import { LoadingSkeleton } from './components/shared/LoadingSkeleton';
+import { LoginPage } from './pages/LoginPage';
 
 function App() {
+  const [token, setToken] = useState(() => localStorage.getItem('jwt_token'));
+  const [role, setRole] = useState(() => localStorage.getItem('jwt_role'));
+
+  const handleLoginSuccess = (role) => {
+    setToken(localStorage.getItem('jwt_token'));
+    setRole(role);
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('jwt_token');
+    localStorage.removeItem('jwt_role');
+    setToken(null);
+    setRole(null);
+  }
+
   const [courses, setCourses] = useState([]);
   const [signals, setSignals] = useState([]);
   
@@ -20,6 +36,10 @@ function App() {
 
   // Carrega visão global (cursos e sinais globais)
   useEffect(() => {
+    if (!token) {
+      return;
+    }
+
     async function init() {
       try {
         setLoadingCourses(true);
@@ -37,7 +57,7 @@ function App() {
       }
     }
     init();
-  }, []);
+  }, [token]);
 
   // Carrega detalhes quando um curso é selecionado
   useEffect(() => {
@@ -57,6 +77,10 @@ function App() {
         setSnapshots(snapData || []);
         setEvasionPoints(evaData || []);
       } catch (err) {
+        if (err?.status === 401) {
+          handleLogout();
+          return;
+        }
         console.error(err);
         // Fallback passivo na UI, limpa os dados
         setSnapshots([]);
@@ -72,8 +96,12 @@ function App() {
     setSelectedCourseId(null);
   };
 
+  if (!token) {
+    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
-    <PageLayout onClearFilters={handleClearFilters}>
+    <PageLayout onClearFilters={handleClearFilters} onLogout={handleLogout} role={role}>
       {loadingCourses ? (
         <LoadingSkeleton rows={4} />
       ) : error ? (
@@ -81,14 +109,14 @@ function App() {
           {error}
         </div>
       ) : !selectedCourseId ? (
-        <OverviewPage 
-          courses={courses} 
-          signals={signals} 
+        <OverviewPage
+          courses={courses}
+          signals={signals}
           selectedCourseId={selectedCourseId}
           onSelectCourse={setSelectedCourseId}
         />
       ) : (
-        <CourseDetailPage 
+        <CourseDetailPage
           courses={courses}
           snapshots={snapshots}
           evasionPoints={evasionPoints}

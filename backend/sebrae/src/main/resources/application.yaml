@@ -27,32 +27,21 @@ server:
     include-stacktrace: never
 
 polaris:
-  # Obrigatório: o boot falha se não configurado (via InternalTokenAuthFilter @PostConstruct)
   internal-token: ${POLARIS_INTERNAL_TOKEN}
-
-  # Mapeamento de X-Internal-Source → ROLE. Formato: source1:ROLE_X,source2:ROLE_Y
-  # Exemplo: collector:ROLE_COLLECTOR,analytics:ROLE_ANALYTICS,admin:ROLE_ADMIN
-  # Se ausente, todos os callers autenticados recebem ROLE_INTERNAL_SERVICE (acesso amplo — não recomendado em produção)
   internal-sources: ${POLARIS_INTERNAL_SOURCES:}
-
-  # IPs de proxies reversos confiáveis (separados por vírgula) cujo X-Forwarded-For será lido.
-  # Se vazio, X-Forwarded-For é ignorado e remoteAddr é sempre utilizado (padrão seguro).
   trusted-proxy-ips: ${POLARIS_TRUSTED_PROXY_IPS:}
-
   security:
-    # Bloqueia acessos iterativos sem o source header definido e mapeado
     require-source: ${POLARIS_SECURITY_REQUIRE_SOURCE:true}
-    # Número de falhas de token por IP dentro da janela para disparar alerta BRUTE_FORCE_SUSPECTED
     token-failure-threshold: ${POLARIS_TOKEN_FAILURE_THRESHOLD:10}
-    # Janela de tempo em ms para contagem de falhas de token por IP
     token-failure-windowMs: ${POLARIS_TOKEN_FAILURE_WINDOW_MS:300000}
-
   burst-detection:
     recalculate:
-      # Número de recalculações por IP dentro da janela para disparar alerta BURST_DETECTED
       threshold: ${POLARIS_BURST_THRESHOLD:5}
-      # Janela de tempo em ms para detecção de burst de recalculações
       window-ms: ${POLARIS_BURST_WINDOW_MS:60000}
+
+jwt:
+  secret: ${JWT_SECRET:polaris-dev-secret-minimo-32-caracteres-ok}
+  expiration-ms: 288000000
 
 rate-limit:
   collection:
@@ -84,7 +73,3 @@ management:
   endpoint:
     health:
       show-details: never
-	  
-jwt:
-    secret: ${JWT_SECRET:polaris-dev-secret-minimo-32-caracteres-ok}
-	expiration-ms: 288000000
