@@ -6,6 +6,10 @@ import { RetentionChart } from '../components/metrics/RetentionChart';
 import { EvasionTimeline } from '../components/metrics/EvasionTimeline';
 import { SignalFeed } from '../components/signals/SignalFeed';
 import { StatusBadge } from '../components/shared/StatusBadge';
+import { PriorityBadge } from '../components/shared/PriorityBadge';
+import { RiskReasonTag } from '../components/shared/RiskReasonTag';
+import { WeightedScoreBar } from '../components/shared/WeightedScoreBar';
+import { formatRatio } from '../utils/enumLabels';
 
 export function CourseDetailPage({ 
   courses, 
@@ -54,7 +58,9 @@ export function CourseDetailPage({
       {/* Bottom Full Row - Tabela */}
       <div className="bottom-grid" style={{ gridColumn: '1 / -1', padding: '0 2rem 2rem 2rem' }}>
         <div className="panel">
-          <h3 style={{ marginBottom: '1rem', color: 'var(--sebrae-blue)' }}>Alunos do curso (Top {Math.min(10, snapshots.length)})</h3>
+          <h3 style={{ marginBottom: '1rem', color: 'var(--sebrae-blue)' }}>
+            Alunos do curso (Top {Math.min(10, snapshots.length)})
+          </h3>
           <table>
             <thead>
               <tr>
@@ -65,6 +71,9 @@ export function CourseDetailPage({
                 <th>Conclusão</th>
                 <th>Profundidade</th>
                 <th>Status (Abandono)</th>
+                <th style={{ color: 'var(--sebrae-blue)' }}>Score ↕</th>
+                <th style={{ color: 'var(--sebrae-blue)' }}>Prioridade</th>
+                <th style={{ color: 'var(--sebrae-blue)' }}>Motivo Principal</th>
               </tr>
             </thead>
             <tbody>
@@ -76,8 +85,8 @@ export function CourseDetailPage({
                   </td>
                   <td>{s.daysSinceLastActivity} dias</td>
                   <td>{s.returnFrequency30d} acessos</td>
-                  <td>{s.completionRatio ? `${Math.round(s.completionRatio * 100)}%` : '-'}</td>
-                  <td>{s.advanceDepth ? `${Math.round(s.advanceDepth * 100)}%` : '-'}</td>
+                  <td>{formatRatio(s.completionRatio)}</td>
+                  <td>{formatRatio(s.advanceDepth)}</td>
                   <td>
                     {s.abandonmentStatus === 'ABANDONED' ? (
                       <span style={{color: 'var(--risk-high-text)', fontWeight: 500}}>Abandonou ({s.abandonedAt ? new Date(s.abandonedAt).toLocaleDateString() : '-'})</span>
@@ -86,6 +95,16 @@ export function CourseDetailPage({
                     ) : (
                       <span style={{color: 'var(--text-muted)'}}>Ativo</span>
                     )}
+                  </td>
+                  {/* Story 8 – Pesagem de Dados */}
+                  <td>
+                    <WeightedScoreBar score={s.weightedRiskScore} showBar={true} />
+                  </td>
+                  <td>
+                    <PriorityBadge level={s.priorityLevel} size="sm" />
+                  </td>
+                  <td>
+                    <RiskReasonTag reason={s.mainRiskReason} />
                   </td>
                 </tr>
               ))}

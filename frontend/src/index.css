@@ -145,7 +145,7 @@ body {
 }
 .list-item:hover { background: #f8fafc; }
 .list-item:last-child { border-bottom: none; }
-.list-item.active { background: #e0e7ff; border-radius: 6px; padding: 1rem; margin: -1rem -1rem 0 -1rem; border-bottom: 1px solid transparent; }
+.list-item.active { background: #e0e7ff; border-radius: 6px; padding: 1rem; margin: 0.5rem -1rem; border-bottom: 1px solid transparent; }
 
 .item-icon {
   width: 40px; height: 40px;
@@ -242,4 +242,146 @@ table {
 }
 th { text-align: left; padding: 1rem; border-bottom: 1px solid var(--border); color: var(--text-muted); font-weight: 600;}
 td { padding: 1rem; border-bottom: 1px solid var(--border); }
+
 tr:hover td { background: #f8fafc; }
+tr:hover td { background: #f8fafc; }
+
+/* ─── Weighted Risk Score – tokens ─────────────────────────── */
+:root {
+  --score-low:           #16a34a;
+  --score-low-text:      #15803d;
+  --score-med:           #d97706;
+  --score-med-text:      #b45309;
+  --score-high:          #dc2626;
+  --score-high-text:     #b91c1c;
+  --score-critical:      #7c3aed;
+  --score-critical-text: #6d28d9;
+}
+
+/* Score bar */
+.wscore-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 64px;
+}
+.wscore-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.wscore-bar-bg {
+  display: block;
+  width: 100%;
+  height: 4px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.wscore-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+/* KPI card score override – larger bar in card */
+.kpi-box .wscore-bar-bg { height: 6px; margin-top: 6px; }
+.kpi-box .wscore-value   { font-size: 1.8rem; }
+
+/* ─── Priority Badge ────────────────────────────────────────── */
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.25rem 0.6rem;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.priority-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.priority-critica  { background: #fce7f3; color: #9d174d; }
+.priority-critica .priority-dot { background: #ec4899; box-shadow: 0 0 0 2px #fce7f380; animation: pulse-dot 1.4s infinite; }
+
+.priority-alta     { background: var(--risk-high-bg); color: var(--risk-high-text); }
+.priority-alta .priority-dot { background: var(--risk-high-text); }
+
+.priority-media    { background: var(--risk-med-bg);  color: var(--risk-med-text); }
+.priority-media .priority-dot { background: var(--risk-med-text); }
+
+.priority-baixa    { background: var(--risk-low-bg);  color: var(--risk-low-text); }
+.priority-baixa .priority-dot { background: var(--risk-low-text); }
+
+.priority-undefined { background: var(--risk-neutral-bg); color: var(--text-muted); }
+
+.priority-size-sm { font-size: 0.65rem; padding: 0.15rem 0.45rem; }
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 #ec489960; }
+  50%       { box-shadow: 0 0 0 4px #ec489918; }
+}
+
+/* ─── Risk Reason Tag ───────────────────────────────────────── */
+.reason-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.2rem 0.55rem;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.reason-icon { font-size: 0.85rem; line-height: 1; }
+
+.reason-inatividade   { background: #fff1f2; color: #be123c; }
+.reason-continuidade  { background: #f0fdf4; color: #166534; }
+.reason-conclusao     { background: #eff6ff; color: #1e40af; }
+.reason-avanco        { background: #fef9c3; color: #854d0e; }
+.reason-sem-sinais    { background: #f5f3ff; color: #5b21b6; }
+.reason-undefined     { background: var(--risk-neutral-bg); color: var(--text-muted); }
+
+/* ─── Operational Summary strip (OverviewPage) ──────────────── */
+.priority-summary-strip {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 0.85rem 1.2rem;
+  margin-bottom: 1.5rem;
+}
+.priority-summary-strip .strip-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--sebrae-blue);
+  letter-spacing: 0.05em;
+  margin-right: 0.25rem;
+  white-space: nowrap;
+}
+.priority-summary-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.25rem 0.65rem;
+  border-radius: 99px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.chip-critica  { background: #fce7f3; color: #9d174d; }
+.chip-alta     { background: var(--risk-high-bg); color: var(--risk-high-text); }
+.chip-media    { background: var(--risk-med-bg);  color: var(--risk-med-text); }
+.chip-baixa    { background: var(--risk-low-bg);  color: var(--risk-low-text); }
+

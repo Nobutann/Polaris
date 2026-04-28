@@ -28,6 +28,10 @@ public class CourseAggregateSummaryDTO {
     private LocalDateTime returnedAt;
     private String abandonmentStatus;
 
+    private BigDecimal weightedRiskScore;
+    private String priorityLevel;
+    private String mainRiskReason;
+
     public CourseAggregateSummaryDTO() {}
 
     public Long getUserId() { return userId; }
@@ -88,4 +92,13 @@ public class CourseAggregateSummaryDTO {
 
     public String getAbandonmentStatus() { return abandonmentStatus; }
     public void setAbandonmentStatus(String abandonmentStatus) { this.abandonmentStatus = abandonmentStatus; }
+
+    public BigDecimal getWeightedRiskScore() { return weightedRiskScore; }
+    public void setWeightedRiskScore(BigDecimal weightedRiskScore) { this.weightedRiskScore = weightedRiskScore; }
+
+    public String getPriorityLevel() { return priorityLevel; }
+    public void setPriorityLevel(String priorityLevel) { this.priorityLevel = priorityLevel; }
+
+    public String getMainRiskReason() { return mainRiskReason; }
+    public void setMainRiskReason(String mainRiskReason) { this.mainRiskReason = mainRiskReason; }
 }
